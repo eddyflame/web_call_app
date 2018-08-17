@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <base href="//mixchatfile.yeejay.com/img/">
+    <!-- <base href="//mixchatfile.yeejay.com/img/"> -->
+    <base href="./Friendium_files/">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Friendium</title>
     <script src="jquery-3.2.1.min.js"></script>
@@ -220,10 +221,11 @@
 
     window.Urls = {
         appStore: 'https://itunes.apple.com/cn/app/id535886823',
-        googlePlay: 'http://www.yeejay.com',
+        googlePlay: 'http://www.friendium.com',
         android: 'mixchat001://',
 //        android: 'orpheus://',
         ios: 'mixchat001://',
+        web: 'https://www.friendium.com/',
     };
 
 
@@ -254,7 +256,7 @@
         var params = parseSearchParam();
 
         // app and app store url
-        Urls['store'] = browser.versions.ios ? Urls.appStore : Urls.googlePlay; //商店地址FB
+        Urls['store'] = browser.versions.ios ? Urls.appStore : Urls.googlePlay; 
         Urls['app'] = browser.versions.ios ? Urls.ios : Urls.android; //APP协议
         console.log(Urls['app']);
         console.log(Urls['store']);
@@ -286,7 +288,9 @@
                     debug_info.value = "I'm not in macro messager!"
                     try {
                         // 定时器用来判断是否有app, 如果没有启动store下载
-                        //appInstall.addTimeout(Urls['store']);
+                        appInstall.addTimeout(Urls['store']);
+                        // web
+                        appInstall.addTimeout(Urls['web']);
                         // open app
                         appInstall.openApp(Urls['app']);
                     } catch (e) {
@@ -311,7 +315,13 @@
                         group_url = app_url + "share:8888/group" + search
                         // show url
                         document.getElementById("and-url").value = group_url
+                    } else {
+                        console.log("can not match android or ios device!");
+                        // alert(app_url)
+                        return
                     }
+
+                    alert(group_url)
                     window.location = group_url
                 }, appInstall.timeoutDuration - 200); // 延迟400ms执行
             },
@@ -339,6 +349,8 @@
 
 
             addTimeout: function (h5url) {
+                console.log(h5url)
+
                 var begin = Date.now();
                 redirectTimeout = setTimeout(function () {
                     //支付宝里面不能打开直接带apk的链接,显示在浏览器打开的提示
