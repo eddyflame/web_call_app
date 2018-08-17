@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <base href="//mixchatfile.yeejay.com/img/">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Friendium</title>
+    <script src="jquery-3.2.1.min.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body{
+            height: 100%;
+            background-image:url('bottom_bg.png');
+            background-repeat:repeat-x;
+            background-attachment:fixed;
+            background-position:bottom;
+            background-size: 100% 100%;
+        }
+
+        .container{
+            width: 100%;
+            padding-top: 58%;
+            bottom: 0;
+            height: 100%;
+            text-align: center;
+        }
+
+        .logo-container {
+            top: -1em;
+            position: relative;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .logo {
+            width: 30%;
+            min-width: 10rem;
+            min-height: 10rem;
+            margin: auto;
+        }
+
+        .logo-container .slogen{
+            margin-top: 6%;
+        }
+
+        .logo-container .slogen p{
+            font-size: 1.1em;
+            color: rgba(0,0,0,0.4);
+            letter-spacing: 2px;
+        }
+
+        .btn {
+            display: block;
+            margin: auto;
+        }
+
+        .btn-group {
+            top: 2em;
+            position: relative;
+        }
+
+        .btn1 {
+            display: inline-block;
+            width: 60%;
+            /*animation: btn_scale 1s ease infinite;*/
+        }
+
+        .btnImg {
+            width: 100%;
+        }
+
+        .open_tips {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .5);
+            text-align: center;
+        }
+
+        .open_tips .arrow {
+            position: absolute;
+            top: 15%;
+            right: 18%;
+            width: 34%;
+        }
+
+        @keyframes btn_scale {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.125);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .trans {
+            opacity:0;
+        }
+
+        .btn-label {
+            width: 20%;
+            pointer-events:none;
+        }
+
+        .inp-text {
+            width: 70%;
+        }
+
+    </style>
+</head>
+
+
+<body>
+<div class="container relative">
+    <!--logo-->
+    <div class="logo-container">
+        <!--<img class="logo" id="logo-img" src="logo.png">-->
+        <a id="egg-trigger" class="btn1 btn" href="Javascript:Gandalf.findme();">
+            <img class="logo" id='logo-img' style="cursor:default" src="logo.png"/>
+        </a>
+
+        <div class="slogen">
+            <p>An easy messenger app</p>
+            <p>Make communication easy</p>
+        </div>
+    </div>
+
+    <!--按钮-->
+    <div class="btn-group">
+        <a id="btnClick1" class="btn1 btn" href="Javascript:Gandalf.runApp();">
+            <img class="btnImg" id='addfriend-icon' src="btn1.png"/>
+        </a>
+    </div>
+
+    <div class='btn-group trans' id='find-egg'>
+        <!---->
+        <input type="button" class='btn-label' value='info'>
+        <input id='loginfo' class='inp-text' type="text">
+        </br>
+
+        <!---->
+        <input type="button" class='btn-label' value='ua'>
+        <input id='showinfo' class='inp-text' type="text" >
+        </br>
+
+        <!---->
+        <input type="button" class='btn-label' value='android'>
+        <input id='and-url' class='inp-text' type="text" >
+        </br>
+
+        <!---->
+        <input type="button" class='btn-label' value='ios'>
+        <input id='ios-url' class='inp-text' type="text" >
+        </br>
+
+        <!---->
+        <button id="trigger" onclick="Javascript:Gandalf.showBrowser()">
+            click
+        </button>
+    </div>
+
+    <div id="open_tips" class="open_tips hide" onclick="Gandalf.openTips()">
+        <img class="arrow" src="arrow.png"/>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+    function parseSearchParam($querystring) {
+        var params = {};
+        if (!$querystring) {
+            $querystring = location.search.substr(1);
+        }
+        var vars = $querystring.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+        return params;
+    }
+
+
+    function iOSversion() {
+        if (/iP(hone|od|ad)/.test(navigator.platform)) {
+            var v = (navigator.appVersion).match(/OS (\d+)_?(\d+)?_?(\d+)?/);
+            return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+        }
+    }
+
+
+    function chromeVersion() {
+        var chrome = navigator.userAgent.match(/Chrome\/(\d+)\./);
+        if (chrome) {
+            return parseInt(chrome[1], 10);
+        }
+    }
+
+
+    window.Urls = {
+        appStore: 'https://itunes.apple.com/cn/app/id535886823',
+        googlePlay: 'http://www.yeejay.com',
+        android: 'mixchat001://',
+//        android: 'orpheus://',
+        ios: 'mixchat001://',
+    };
+
+
+    window.browser = {
+        versions: function () {
+            var u = navigator.userAgent, app = navigator.appVersion;
+            return {
+                trident: /Trident/i.test(u), //IE内核
+                webKit: /AppleWebKit/i.test(u), //苹果、谷歌内核
+                mobile: /Android/i.test(u) || /iPhone/i.test(u) || /iPad/i.test(u), //是否为移动终端
+                ios: /\(i[^;]+;( U;)? CPU.+Mac OS X/.test(u), //ios终端
+                android: /Android/i.test(u) || /Linux/i.test(u), //android终端或者uc浏览器
+                iPhone: /iPhone/i.test(u), //是否为iPhone或者QQHD浏览器
+                iPad: /iPad/i.test(u),
+                weixin: /MicroMessenger/i.test(u),
+                alipay: /alipay/i.test(u),
+                qq: /QQ/i.test(u)
+            };
+        }(),
+        language: (navigator.browserLanguage || navigator.language).toLowerCase()
+    };
+
+
+    window.easter_egg = 0;
+
+
+    window.Gandalf = (function () {
+        var params = parseSearchParam();
+
+        // app and app store url
+        Urls['store'] = browser.versions.ios ? Urls.appStore : Urls.googlePlay; //商店地址FB
+        Urls['app'] = browser.versions.ios ? Urls.ios : Urls.android; //APP协议
+        console.log(Urls['app']);
+        console.log(Urls['store']);
+
+
+        var ua = navigator.userAgent;
+
+        var appInstall = {
+            isChrome: ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
+            isAndroid: ua.match(/(Android);?[\s\/]+([\d.]+)?/),
+            timeoutDuration: 600,
+            iosVersion: iOSversion(),
+            chromeVersion: chromeVersion(),
+
+
+            /**
+             * 尝试跳转appurl,如果跳转(start app)失败，进入h5url
+             * @param {Object} appurl 应用地址
+             * @param {Object} h5url  http地址
+             */
+            open: function () {
+                //安卓微信不能拉起,显示提示loginfo
+                var debug_info = document.getElementById("loginfo")
+
+                if (browser.versions.weixin && browser.versions.android) {
+                    debug_info.value = "I'm in macro messager!"
+                    appInstall.openTips();
+                } else {
+                    debug_info.value = "I'm not in macro messager!"
+                    try {
+                        // 定时器用来判断是否有app, 如果没有启动store下载
+                        //appInstall.addTimeout(Urls['store']);
+                        // open app
+                        appInstall.openApp(Urls['app']);
+                    } catch (e) {
+                        alert("start app error!");
+                    }
+                }
+            },
+
+
+            openApp: function (app_url) {
+                setTimeout(function () {
+                    var search = location.search[0] + "groupcode=" + location.search.substr(1)
+                    appInstall.openAppByFrame(app_url);
+                    var group_url = ""
+                    if (appInstall.iosVersion && appInstall.iosVersion[0] >= 9) {
+                        // ios device
+                        group_url = app_url + search;
+                        // show url
+                        document.getElementById("ios-url").value = group_url
+                    } else if (appInstall.isChrome && appInstall.isAndroid && appInstall.chromeVersion && appInstall.chromeVersion > 18) {
+                        // android device mayby chrome browser
+                        group_url = app_url + "share:8888/group" + search
+                        // show url
+                        document.getElementById("and-url").value = group_url
+                    }
+                    window.location = group_url
+                }, appInstall.timeoutDuration - 200); // 延迟400ms执行
+            },
+
+
+            openH5: function (h5url) {
+                window.location = h5url;
+            },
+
+
+            openTips: function () {
+                $('#open_tips').toggle();
+            },
+
+
+            openAppByFrame: function (appurl) {
+                var iframe = document.createElement("iframe");
+                iframe.style.display = "none";
+                iframe.style.border = "none";
+                iframe.style.width = "1px";
+                iframe.style.height = "1px";
+                iframe.src = appurl;
+                document.body.appendChild(iframe);
+            },
+
+
+            addTimeout: function (h5url) {
+                var begin = Date.now();
+                redirectTimeout = setTimeout(function () {
+                    //支付宝里面不能打开直接带apk的链接,显示在浏览器打开的提示
+                    if (browser.versions.alipay && /\.apk/.test(h5url)) {
+                        appInstall.openTips();
+                    } else {
+                        h5url && appInstall.openH5(h5url);
+                    }
+                }, appInstall.timeoutDuration + 1500);
+
+                // 失去焦点时触发清除定时器
+                $(window).blur(function () {
+                    //跳出去了就不再跳转
+                    clearTimeout(redirectTimeout);
+                });
+
+                // 页面隐藏(跳转到其他页面)事件
+                window.addEventListener("pagehide", function () {
+                    clearTimeout(redirectTimeout);
+                }, false);
+
+                // 失去焦点事件
+                window.addEventListener("blur", function () {
+                    clearTimeout(redirectTimeout);
+                }, false);
+            }
+        };
+
+
+        return {
+            openTips: function () {
+                appInstall.openTips();
+            },
+
+
+            runApp: function () {
+                appInstall.open();
+            },
+
+
+            download: function () {
+                location.replace(Urls['store']);
+            },
+
+            showBrowser: function() {
+                console.log(navigator.userAgent)
+                var iput = document.getElementById("showinfo")
+                iput.value = navigator.userAgent
+                console.log(iput.value)
+            },
+
+            findme: function() {
+                console.log(window.easter_egg)
+                if (window.easter_egg > 0xA) {
+                    document.getElementById("find-egg").style.opacity = '50'
+                    window.easter_egg = 0
+                } else {
+                    document.getElementById("find-egg").style.opacity = '0'
+                    window.easter_egg += 1
+                }
+            }
+
+        };
+    })();
+
+
+</script>
+</body>
+</html>
