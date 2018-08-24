@@ -296,17 +296,16 @@
 
             openApp: function (app_url) {
                 setTimeout(function () {
-                    var search = location.search[0] + "groupcode=" + location.search.substr(1)
                     appInstall.openAppByFrame(app_url);
                     var group_url = ""
                     if (appInstall.iosVersion && appInstall.iosVersion[0] >= 9) {
                         // ios device
-                        group_url = app_url + search;
+                        group_url = app_url + location.search;
                         // show url
                         document.getElementById("ios-url").value = group_url
                     } else if (appInstall.isChrome && appInstall.isAndroid && appInstall.chromeVersion && appInstall.chromeVersion > 18) {
                         // android device mayby chrome browser
-                        group_url = app_url + "share:8888/group" + search
+                        group_url = app_url + "share:8888/group" + location.search
                         // show url
                         document.getElementById("and-url").value = group_url
                     } else {
@@ -378,7 +377,6 @@
             },
 
             showBrowser: function() {
-                console.log(navigator.userAgent)
                 var iput = document.getElementById("showinfo")
                 iput.value = navigator.userAgent
                 console.log(iput.value)
